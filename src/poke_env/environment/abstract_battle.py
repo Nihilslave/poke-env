@@ -711,7 +711,11 @@ class AbstractBattle(ABC):
             source, target, stats = split_message[2:5]
             source = self.get_pokemon(source)
             target = self.get_pokemon(target)
-            for stat in stats.split(", "):
+            if stats == "[from] move: Heart Swap":
+                stats = source.boosts.keys() | target.boosts.keys()
+            else:
+                stats = stats.split(", ")
+            for stat in stats:
                 source.boosts[stat], target.boosts[stat] = (
                     target.boosts[stat],
                     source.boosts[stat],
