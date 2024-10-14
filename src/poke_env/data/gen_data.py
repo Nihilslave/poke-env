@@ -10,7 +10,7 @@ from poke_env.data.normalize import to_id_str
 
 
 class GenData:
-    __slots__ = ("gen", "moves", "natures", "pokedex", "type_chart", "learnset")
+    __slots__ = ("gen", "moves", "abilities", "natures", "pokedex", "type_chart", "learnset")
 
     UNKNOWN_ITEM = "unknown_item"
 
@@ -21,6 +21,7 @@ class GenData:
             raise ValueError(f"GenData for gen {gen} already initialized.")
 
         self.gen = gen
+        self.abilities = self.load_abilities(gen)
         self.moves = self.load_moves(gen)
         self.natures = self.load_natures()
         self.pokedex = self.load_pokedex(gen)
@@ -29,6 +30,12 @@ class GenData:
 
     def __deepcopy__(self, memodict: Optional[Dict[int, Any]] = None) -> GenData:
         return self
+
+    def load_abilities(self, gen: int) -> Dict[str, Any]:
+        with open(
+            os.path.join(self._static_files_root, "abilities", f"gen{gen}abilities.json")
+        ) as f:
+            return orjson.loads(f.read())
 
     def load_moves(self, gen: int) -> Dict[str, Any]:
         with open(
